@@ -843,6 +843,74 @@ include::{generated}/validity/structs/VkPhysicalDeviceMemoryBudgetPropertiesEXT.
 endif::VK_EXT_memory_budget[]
 
 
+ifdef::VK_GOOGLE_shadow_heap_capabilities[]
+
+[open,refpage='VkPhysicalDeviceMemoryShadowHeapPropertiesGOOGLE',desc='Structure specifying physical device shadow heap capabilities',type='structs']
+--
+
+If the sname:VkPhysicalDeviceMemoryShadowHeapPropertiesGOOGLE structure is
+included in the pname:pNext chain of slink:VkPhysicalDeviceMemoryProperties2,
+it is filled with the shadow heap capabilities.
+
+The sname:sname:VkPhysicalDeviceMemoryShadowHeapPropertiesGOOGLE structure is
+defined as:
+
+include::{generated}/api/structs/VkPhysicalDeviceMemoryShadowHeapPropertiesGOOGLE.txt[]
+
+  * pname:sType is the type of this structure.
+  * pname:pNext is `NULL` or a pointer to an extension-specific structure.
+  * pname:heapAllocationUnit is an array of allocation units (page sizes, or
+    mulitples of page sizes), with one element for each memory heap.
+  * pname:heapCompatibleHandleTypes is an array of compatible handle types,
+    with one element for each memory heap.
+    A shadow heap can be created from one of the compatible handle types.
+  * pname:memoryHostAccessPolicy is an array of host access policies, with one
+    element for each memory type.
+
+The pname:heapAllocationUnit and pname:heapCompatibleHandleTypes values must:
+be zero for array elements greater than or equal to
+slink:VkPhysicalDeviceMemoryProperties::pname:memoryHeapCount, or when the
+heap cannot be shadowed.
+The pname:memoryHostAccessPolicy values must:
+be zero for array elements greater than or equal to
+slink:VkPhysicalDeviceMemoryProperties::pname:memoryTypeCount, or when the
+memory type uses a heap that cannot be shadowed.
+
+include::{generated}/validity/structs/VkPhysicalDeviceMemoryShadowHeapPropertiesGOOGLE.txt[]
+--
+
+[open,refpage='VkMemoryShadowHeapHandleTypeFlagBitsGOOGLE',desc='Specify shadow heap handles',type='enums']
+--
+
+Possible values for elemens of
+slink:VkPhysicalDeviceMemoryShadowHeapPropertiesGOOGLE::heapCompatibleHandleTypes
+include:
+
+include::{generated}/api/enums/VkMemoryShadowHeapHandleTypeFlagBitsGOOGLE.txt[]
+
+  * ename:VK_MEMORY_SHADOW_HEAP_HANDLE_TYPE_MEM_FD_BIT_GOOGLE is for memfd.
+
+--
+
+[open,refpage='VkMemoryHostAccessPolicyFlagBitsGOOGLE',desc='Specify memory host access policy',type='enums']
+--
+
+Possible values for elemens of
+slink:VkPhysicalDeviceMemoryShadowHeapPropertiesGOOGLE::memoryHostAccessPolicy
+include:
+
+include::{generated}/api/enums/VkMemoryHostAccessPolicyFlagBitsGOOGLE.txt[]
+
+  * ename:VK_MEMORY_HOST_ACCESS_POLICY_UNCACHED_BIT_GOOGLE is uncached.
+  * ename:VK_MEMORY_HOST_ACCESS_POLICY_WRITE_COMBINE_BIT_GOOGLE is write-combine.
+  * ename:VK_MEMORY_HOST_ACCESS_POLICY_WRITE_THROUGH_BIT_GOOGLE is write-through.
+  * ename:VK_MEMORY_HOST_ACCESS_POLICY_WRITE_BACK_BIT_GOOGLE is write-back.
+
+--
+
+endif::VK_GOOGLE_shadow_heap_capabilities[]
+
+
 [open,refpage='VkDeviceMemory',desc='Opaque handle to a device memory object',type='handles']
 --
 
@@ -1426,6 +1494,41 @@ include::{generated}/validity/structs/VkMemoryPriorityAllocateInfoEXT.txt[]
 --
 
 endif::VK_EXT_memory_priority[]
+
+
+ifdef::VK_GOOGLE_shadow_heap[]
+
+[open,refpage='VkMemoryShadowHeapAllocateInfoGOOGLE',desc='Specify a memory offset',type='structs']
+--
+
+When sname:VkMemoryAllocateInfo::pname:memoryTypeIndex specifies a memory type
+whose heap is shadowed, the pname:pNext chain must include a
+sname:VkMemoryShadowHeapAllocateInfoGOOGLE.
+
+The sname:VkMemoryShadowHeapAllocateInfoGOOGLE structure is defined as:
+
+include::{generated}/api/structs/VkMemoryShadowHeapAllocateInfoGOOGLE.txt[]
+
+  * pname:sType is the type of this structure.
+  * pname:pNext is `NULL` or a pointer to an extension-specific structure.
+  * pname:offset is the offset of the memory in the shadowing heap.
+
+.Valid Usage
+****
+  * pname:offset must: be a mulitple of
+    sname:VkPhysicalDeviceMemoryShadowHeapPropertiesGOOGLE::pname:heapAllocationUnit
+    for the heap index.
+  * sname:VkMemoryAllocateInfo::pname:allocationSize must: be a mulitple of
+    sname:VkPhysicalDeviceMemoryShadowHeapPropertiesGOOGLE::pname:heapAllocationUnit
+    for the heap index.
+  * The range [pname:offset, pname:offset +
+    sname:VkMemoryAllocateInfo::pname:allocationSize] must not overlap with
+    the range of any valid memory object from the same shadowed heap.
+****
+include::{generated}/validity/structs/VkMemoryShadowHeapAllocateInfoGOOGLE.txt[]
+--
+
+endif::VK_GOOGLE_shadow_heap[]
 
 
 ifdef::VK_VERSION_1_1,VK_KHR_external_memory[]
@@ -2593,6 +2696,26 @@ accesses performed through the host pointer of the host mapped device memory
 range returned by flink:vkMapMemory.
 ====
 endif::VK_EXT_external_memory_host[]
+
+ifdef::VK_GOOGLE_shadow_heap[]
+[NOTE]
+.Note
+====
+
+Memory objects allocated from a shadowed heap can potentially be mapped,
+unmapped, flushed, and invalidated with appropriate primitives provided by the
+platform which are outside the scope of Vulkan.
+When a memory object is created from a shadowed heap, host accesses outside of
+the current Vulkan instance are indistinguishable from host accesses within
+the current Vulkan instance, provided the appropriate platform-defined
+primitives are used map the memory object. Specifically, when the memory
+object has the ename:VK_MEMORY_PROPERTY_HOST_COHERENT_BIT set, host accesses
+outside of the current Vulkan instance are also coherent. When
+ename:VK_MEMORY_PROPERTY_HOST_COHERENT_BIT is not set, appropriate
+platform-defined primitives are sufficient to guarantee the host domain
+availability and visibility.
+====
+endif::VK_GOOGLE_shadow_heap[]
 
 [open,refpage='vkFlushMappedMemoryRanges',desc='Flush mapped memory ranges',type='protos']
 --

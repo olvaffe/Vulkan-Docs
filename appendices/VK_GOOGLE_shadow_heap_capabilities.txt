@@ -1,0 +1,81 @@
+// Copyright (c) 2016-2019 Khronos Group. This work is licensed under a
+// Creative Commons Attribution 4.0 International License; see
+// http://creativecommons.org/licenses/by/4.0/
+
+include::meta/VK_GOOGLE_shadow_heap_capabilities.txt[]
+
+Last Modified Date::
+    2019-07-22
+Contributors::
+  - Chia-I Wu
+
+This extension provides a set of capability queries and handle definitions
+that allow an application to determine which memory heaps can be shadowed with
+"external" memory heaps. The enables the application to share memory heaps,
+probably created by another process with a different API, with Vulkan.
+
+=== New Enum Constants
+
+  * Extending elink:VkStructureType:
+  ** ename:VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_SHADOW_HEAP_PROPERTIES_GOOGLE
+
+=== New Enums
+
+  * elink:VkMemoryShadowHeapHandleTypeFlagBitsGOOGLE
+  * elink:VkMemoryHostAccessPolicyFlagBitsGOOGLE
+
+=== New Structures
+
+  * slink:VkPhysicalDeviceMemoryShadowHeapPropertiesGOOGLE
+
+=== New Functions
+
+None.
+
+=== Issues
+
+1. What do shadow heaps provide that external meomries don't?
+
+   Vulkan says that buffers and linear images can always be bound to a
+   host-visible, coherent memory. But there is no guarantee that a remote
+   process can create a coherent buffer with an external memory remotely,
+   because the external memory has its own memory type requirements which
+   might not include any coherent memory type.
+
+   An external memory might also necessitate dedicated allocations. It might
+   not be possible to bind different regions of an external memory to
+   different buffers/images.
+
+   Moreover, it is unclear if host accesses from the remote process are
+   allowed, let alone coherent, when Vulkan has the exclusive ownership of the
+   external memory.
+
+   Shadow heaps attempt to solve these issues. It explicitly requires that
+   buffers and linear images must be bound-able to a shadow-able heap that is
+   also coherent.  Dedicated allocation is irrelevant at the heap level.
+
+   Finally, it clarifies that on a platform where the extension is supported,
+   while each Vulkan instance has its own device domain and requires
+   queue/resource ownership transfers, there is only one universal host
+   domain.  Host accesses from a remote process are indistinguishable from
+   host accesses in the local process through the pointer returned by
+   vkMapMemory, provided the memory mappings are set up in compatible ways.
+
+2. Why are external memory heaps called shadow memory heaps instead?
+
+   An external memory heap implies that it can be imported to the physical
+   device as a new physical memory heap.  But a physical device is currently
+   designed such that we can query capabilities from it, but not adding new
+   capabilities to it.  We cannot "import" an external memory heap.
+
+   And unlike with external semaphores/fences/memories, we do not expect to
+   support exporting either due to security.
+
+   It is easier to design this extension such that, when a logical device is
+   created, the logical device can optionally shadow the physical memory heaps
+   with external memory heaps.
+
+=== Version History
+
+ * Revision 1, 2019-07-22 (Chia-I Wu)
+   - Initial draft

@@ -1100,6 +1100,43 @@ include::{generated}/api/enums/VkMemoryOverallocationBehaviorAMD.txt[]
 endif::VK_AMD_memory_overallocation_behavior[]
 
 
+ifdef::VK_GOOGLE_shadow_heap_mem_fd[]
+
+[open,refpage='VkDeviceMemoryShadowHeapMemFdCreateInfoGOOGLE',desc='Specify a shadowing heap for a logical device',type='structs']
+--
+
+To specify memfd-based shadowing heaps for the logical device, add one or more
+slink:VkDeviceMemoryShadowHeapMemFdCreateInfoGOOGLE structure to the
+pname:pNext chain of the slink:VkDeviceCreateInfo structure.
+
+include::{generated}/api/structs/VkDeviceMemoryShadowHeapMemFdCreateInfoGOOGLE.txt[]
+
+  * pname:sType is the type of this structure.
+  * pname:pNext is `NULL` or a pointer to an extension-specific structure.
+  * pname:fd is the file descriptor of the memfd heap.
+  * pname:heapIndex is the index of the heap to be shadowed.
+
+When a heap is shadowed in a logical device, allocations from the shadowed
+heap are redirected to be from the respective shadowing memfd-based heaps.
+
+The ownership of the file descriptor is transferred to the logical device.
+The application must: not perform any operation on the file descriptor after
+the logical device is successfully created.
+
+.Valid Usage
+****
+  * pname:fd must: be a valid memfd.
+  * pname:heapIndex must: be the index of an unshadowed heap that supports
+    shadowing with memfd.
+  * The sizes of the shadowing and the shadowed heaps do not need to match.
+****
+
+include::{generated}/validity/structs/VkDeviceMemoryShadowHeapMemFdCreateInfoGOOGLE.txt[]
+--
+
+endif::VK_GOOGLE_shadow_heap_mem_fd[]
+
+
 
 [[devsandqueues-use]]
 === Device Use

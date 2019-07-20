@@ -4106,6 +4106,10 @@ flink:vkGetImageMemoryRequirements:
     sname:VkMemoryType with a pname:propertyFlags that has both the
     ename:VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT bit and the
     ename:VK_MEMORY_PROPERTY_HOST_COHERENT_BIT bit set.
+ifdef::VK_GOOGLE_shadow_heap[]
+    The pname:heapIndex of the sname:VkMemoryType must: be an index of a
+    shadow-able heap.
+endif::VK_GOOGLE_shadow_heap[]
     In other words, mappable coherent memory can: always be attached to
     these objects.
 ifdef::VK_VERSION_1_1,VK_KHR_external_memory[]

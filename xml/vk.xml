@@ -296,6 +296,8 @@ typedef void <name>CAMetalLayer</name>;
         <type requires="VkDebugReportFlagBitsEXT"      category="bitmask">typedef <type>VkFlags</type> <name>VkDebugReportFlagsEXT</name>;</type>
         <type                                             category="bitmask">typedef <type>VkFlags</type> <name>VkCommandPoolTrimFlags</name>;</type>
         <type                                             category="bitmask" name="VkCommandPoolTrimFlagsKHR"                 alias="VkCommandPoolTrimFlags"/>
+        <type requires="VkMemoryShadowHeapHandleTypeFlagBitsGOOGLE" category="bitmask">typedef <type>VkFlags</type> <name>VkMemoryShadowHeapHandleTypeFlagGOOGLE</name>;</type>
+        <type requires="VkMemoryHostAccessPolicyFlagBitsGOOGLE" category="bitmask">typedef <type>VkFlags</type> <name>VkMemoryHostAccessPolicyFlagGOOGLE</name>;</type>
         <type requires="VkExternalMemoryHandleTypeFlagBitsNV" category="bitmask">typedef <type>VkFlags</type> <name>VkExternalMemoryHandleTypeFlagsNV</name>;</type>
         <type requires="VkExternalMemoryFeatureFlagBitsNV" category="bitmask">typedef <type>VkFlags</type> <name>VkExternalMemoryFeatureFlagsNV</name>;</type>
         <type requires="VkExternalMemoryHandleTypeFlagBits" category="bitmask">typedef <type>VkFlags</type> <name>VkExternalMemoryHandleTypeFlags</name>;</type>
@@ -516,6 +518,8 @@ typedef void <name>CAMetalLayer</name>;
         <type name="VkDebugReportFlagBitsEXT" category="enum"/>
         <type name="VkDebugReportObjectTypeEXT" category="enum"/>
         <type name="VkRasterizationOrderAMD" category="enum"/>
+        <type name="VkMemoryShadowHeapHandleTypeFlagBitsGOOGLE" category="enum"/>
+        <type name="VkMemoryHostAccessPolicyFlagBitsGOOGLE" category="enum"/>
         <type name="VkExternalMemoryHandleTypeFlagBitsNV" category="enum"/>
         <type name="VkExternalMemoryFeatureFlagBitsNV" category="enum"/>
         <type name="VkValidationCheckEXT" category="enum"/>
@@ -1804,6 +1808,24 @@ typedef void <name>CAMetalLayer</name>;
             <member>const <type>void</type>*                      <name>pNext</name></member>
             <member len="null-terminated">const <type>char</type>* <name>pMarkerName</name><comment>Name of the debug marker</comment></member>
             <member optional="true"><type>float</type>            <name>color</name>[4]<comment>Optional color for debug marker</comment></member>
+        </type>
+        <type category="struct" name="VkPhysicalDeviceMemoryShadowHeapPropertiesGOOGLE" structextends="VkPhysicalDeviceMemoryProperties2" returnedonly="true">
+            <member values="VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_SHADOW_HEAP_PROPERTIES_GOOGLE"><type>VkStructureType</type> <name>sType</name></member>
+            <member>const <type>void</type>*                      <name>pNext</name></member>
+            <member><type>VkDeviceSize</type>                       <name>heapAllocationUnit</name>[<enum>VK_MAX_MEMORY_HEAPS</enum>]</member>
+            <member><type>VkMemoryShadowHeapHandleTypeFlagGOOGLE</type>                       <name>heapCompatibleHandleTypes</name>[<enum>VK_MAX_MEMORY_HEAPS</enum>]</member>
+            <member><type>VkMemoryHostAccessPolicyFlagBitsGOOGLE</type>                       <name>memoryHostAccessPolicy</name>[<enum>VK_MAX_MEMORY_TYPES</enum>]</member>
+        </type>
+	<type category="struct" name="VkDeviceMemoryShadowHeapMemFdCreateInfoGOOGLE" structextends="VkDeviceCreateInfo">
+            <member values="VK_STRUCTURE_TYPE_DEVICE_MEMORY_SHADOW_HEAP_MEM_FD_CREATE_INFO_GOOGLE"><type>VkStructureType</type> <name>sType</name></member>
+            <member>const <type>void</type>*                      <name>pNext</name></member>
+            <member><type>int</type>                       <name>fd</name></member>
+            <member><type>uint32_t</type>                       <name>heapIndex</name></member>
+        </type>
+	<type category="struct" name="VkMemoryShadowHeapAllocateInfoGOOGLE" structextends="VkMemoryAllocateInfo">
+            <member values="VK_STRUCTURE_TYPE_MEMORY_SHADOW_HEAP_ALLOCATE_INFO_GOOGLE"><type>VkStructureType</type> <name>sType</name></member>
+            <member>const <type>void</type>*                      <name>pNext</name></member>
+            <member><type>VkDeviceSize</type>                       <name>offset</name></member>
         </type>
         <type category="struct" name="VkDedicatedAllocationImageCreateInfoNV" structextends="VkImageCreateInfo">
             <member values="VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_IMAGE_CREATE_INFO_NV"><type>VkStructureType</type> <name>sType</name></member>
@@ -4882,6 +4904,15 @@ typedef void <name>CAMetalLayer</name>;
     <enums name="VkRasterizationOrderAMD" type="enum">
         <enum value="0"     name="VK_RASTERIZATION_ORDER_STRICT_AMD"/>
         <enum value="1"     name="VK_RASTERIZATION_ORDER_RELAXED_AMD"/>
+    </enums>
+    <enums name="VkMemoryShadowHeapHandleTypeFlagBitsGOOGLE" type="bitmask">
+        <enum bitpos="0"    name="VK_MEMORY_SHADOW_HEAP_HANDLE_TYPE_MEM_FD_BIT_GOOGLE"/>
+    </enums>
+    <enums name="VkMemoryHostAccessPolicyFlagBitsGOOGLE" type="bitmask">
+        <enum bitpos="0"    name="VK_MEMORY_HOST_ACCESS_POLICY_UNCACHED_BIT_GOOGLE"/>
+        <enum bitpos="1"    name="VK_MEMORY_HOST_ACCESS_POLICY_WRITE_COMBINE_BIT_GOOGLE"/>
+        <enum bitpos="2"    name="VK_MEMORY_HOST_ACCESS_POLICY_WRITE_THROUGH_BIT_GOOGLE"/>
+        <enum bitpos="3"    name="VK_MEMORY_HOST_ACCESS_POLICY_WRITE_BACK_BIT_GOOGLE"/>
     </enums>
     <enums name="VkExternalMemoryHandleTypeFlagBitsNV" type="bitmask">
         <enum bitpos="0"    name="VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT_NV"/>
@@ -10447,22 +10478,30 @@ typedef void <name>CAMetalLayer</name>;
                 <type name="VkPipelineCreationFeedbackEXT"/>
             </require>
         </extension>
-        <extension name="VK_GOOGLE_extension_194" number="194" author="GOOGLE" contact="Jean-Francois Roy @jfroy" supported="disabled">
+        <extension name="VK_GOOGLE_shadow_heap_capabilities" number="194" type="instance" author="GOOGLE" contact="Chia-I Wu" supported="vulkan">
             <require>
-                <enum value="0"                                         name="VK_GOOGLE_EXTENSION_194_SPEC_VERSION"/>
-                <enum value="&quot;VK_GOOGLE_extension_194&quot;"       name="VK_GOOGLE_EXTENSION_194_EXTENSION_NAME"/>
+                <enum value="0"                                         name="VK_GOOGLE_SHADOW_HEAP_CAPABILITIES_SPEC_VERSION"/>
+                <enum value="&quot;VK_GOOGLE_shadow_heap_capabilities&quot;"       name="VK_GOOGLE_SHADOW_HEAP_CAPABILITIES_EXTENSION_NAME"/>
+                <enum offset="0" extends="VkStructureType"              name="VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_SHADOW_HEAP_PROPERTIES_GOOGLE"/>
+                <type name="VkMemoryShadowHeapHandleTypeFlagBitsGOOGLE"/>
+                <type name="VkMemoryHostAccessPolicyFlagBitsGOOGLE"/>
+                <type name="VkPhysicalDeviceMemoryShadowHeapPropertiesGOOGLE"/>
             </require>
         </extension>
-        <extension name="VK_GOOGLE_extension_195" number="195" author="GOOGLE" contact="Jean-Francois Roy @jfroy" supported="disabled">
+        <extension name="VK_GOOGLE_shadow_heap_mem_fd" number="195" type="device" requires="VK_GOOGLE_shadow_heap_capabilities" author="GOOGLE" contact="Chia-I Wu" supported="vulkan">
             <require>
-                <enum value="0"                                         name="VK_GOOGLE_EXTENSION_195_SPEC_VERSION"/>
-                <enum value="&quot;VK_GOOGLE_extension_195&quot;"       name="VK_GOOGLE_EXTENSION_195_EXTENSION_NAME"/>
+                <enum value="0"                                         name="VK_GOOGLE_SHADOW_HEAP_MEM_FD_SPEC_VERSION"/>
+                <enum value="&quot;VK_GOOGLE_shadow_heap_mem_fd&quot;"       name="VK_GOOGLE_SHADOW_HEAP_MEM_FD_EXTENSION_NAME"/>
+                <enum offset="0" extends="VkStructureType"              name="VK_STRUCTURE_TYPE_DEVICE_MEMORY_SHADOW_HEAP_MEM_FD_CREATE_INFO_GOOGLE"/>
+                <type name="VkDeviceMemoryShadowHeapMemFdCreateInfoGOOGLE"/>
             </require>
         </extension>
-        <extension name="VK_GOOGLE_extension_196" number="196" author="GOOGLE" contact="Jean-Francois Roy @jfroy" supported="disabled">
+        <extension name="VK_GOOGLE_shadow_heap" number="196" type="device" requires="VK_GOOGLE_shadow_heap_capabilities" author="GOOGLE" contact="Chia-I Wu" supported="vulkan">
             <require>
-                <enum value="0"                                         name="VK_GOOGLE_EXTENSION_196_SPEC_VERSION"/>
-                <enum value="&quot;VK_GOOGLE_extension_196&quot;"       name="VK_GOOGLE_EXTENSION_196_EXTENSION_NAME"/>
+                <enum value="0"                                         name="VK_GOOGLE_SHADOW_HEAP_SPEC_VERSION"/>
+                <enum value="&quot;VK_GOOGLE_shadow_heap&quot;"       name="VK_GOOGLE_SHADOW_HEAP_EXTENSION_NAME"/>
+                <enum offset="0" extends="VkStructureType"              name="VK_STRUCTURE_TYPE_MEMORY_SHADOW_HEAP_ALLOCATE_INFO_GOOGLE"/>
+                <type name="VkMemoryShadowHeapAllocateInfoGOOGLE"/>
             </require>
         </extension>
         <extension name="VK_KHR_driver_properties" number="197" type="device" requires="VK_KHR_get_physical_device_properties2" author="KHR" contact="Daniel Rakos @drakos-amd" supported="vulkan">

@@ -1,0 +1,29 @@
+// Copyright (c) 2016-2019 Khronos Group. This work is licensed under a
+// Creative Commons Attribution 4.0 International License; see
+// http://creativecommons.org/licenses/by/4.0/
+
+include::meta/VK_GOOGLE_shadow_heap_mem_fd.txt[]
+
+Last Modified Date::
+    2019-07-22
+Contributors::
+  - Chia-I Wu
+
+This extension enables an application to shadow memory heaps with external
+memory heaps that are backed by memfd.
+
+=== New Enum Constants
+
+  * Extending elink:VkStructureType:
+  ** ename:VK_STRUCTURE_TYPE_DEVICE_MEMORY_SHADOW_HEAP_MEM_FD_CREATE_INFO_GOOGLE
+  * Extending elink:VkMemoryShadowHeapHandleTypeFlagBitsGOOGLE
+  ** ename:VK_MEMORY_SHADOW_HEAP_HANDLE_TYPE_MEM_FD_BIT_GOOGLE
+
+=== New Structures
+
+  * slink:VkDeviceMemoryShadowHeapMemFdCreateInfoGOOGLE
+
+=== Version History
+
+ * Revision 1, 2019-07-22 (Chia-I Wu)
+   - Initial draft
