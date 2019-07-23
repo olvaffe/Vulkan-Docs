@@ -843,6 +843,100 @@ include::{generated}/validity/structs/VkPhysicalDeviceMemoryBudgetPropertiesEXT.
 endif::VK_EXT_memory_budget[]
 
 
+ifdef::VK_GOOGLE_external_memory_foreign_host_access[]
+
+[open,refpage='VkPhysicalDeviceMemoryForeignHostAccessPropertiesGOOGLE',desc='Structure specifying foreign host access capabilities',type='structs']
+--
+
+If the sname:VkPhysicalDeviceMemoryForeignHostAccessPropertiesGOOGLE structure
+is included in the pname:pNext chain of
+slink:VkPhysicalDeviceMemoryProperties2, it is filled with the foreign host
+access capabilities.
+
+The sname:VkPhysicalDeviceMemoryForeignHostAccessPropertiesGOOGLE structure is
+defined as:
+
+include::{generated}/api/structs/VkPhysicalDeviceMemoryForeignHostAccessPropertiesGOOGLE.txt[]
+
+  * pname:sType is the type of this structure.
+  * pname:pNext is `NULL` or a pointer to an extension-specific structure.
+  * pname:foreignHostAccessMemoryTypes is an array of
+    slink:VkForeignHostAccessMemoryTypeGOOGLE structures describing the
+    foreign host access capabilities of each memory type.
+
+include::{generated}/validity/structs/VkPhysicalDeviceMemoryForeignHostAccessPropertiesGOOGLE.txt[]
+--
+
+[open,refpage='VkForeignHostAccessMemoryTypeGOOGLE',desc='Structure specifying foreign host access',type='structs']
+--
+
+The sname:VkForeignHostAccessMemoryTypeGOOGLE structure is defined as:
+
+include::{generated}/api/structs/VkForeignHostAccessMemoryTypeGOOGLE.txt[]
+
+  * pname:shareExclusiveOwnership is a boolean value specifying whether the
+    <<resources-external-sharing,exclusive ownership>> of a memory object
+    using the memory type is shared with another Vulkan instance or an
+    external API for foreign host access.
+  * pname:compatibleAccessFlags is a bitmask of
+    elink:VkMemoryForeignHostAccessFlagBitsGOOGLE specifying the compatible
+    foreign host access policies for the memory type.
+  * pname:coherentAccessFlags is a bitmask of
+    elink:VkMemoryForeignHostAccessFlagBitsGOOGLE specifying the coherent
+    foreign host access policies for the memory type.
+
+The external memory handle of an imported or exported memory object can be
+shared outside of Vulkan.
+When there are platform-defined mechanisms to access the underlying memory
+from the host, the access is foreign host access.
+Foreign host access must: use an access policy specified in
+pname:compatibleAccessFlags.
+Foreign host access using an access policy specified in
+pname:coherentAccessFlags is coherent.
+Foreign host access not using any access policy specified in
+pname:coherentAccessFlags is non-coherent.
+
+.Valid Usage
+****
+  * pname:shareExclusiveOwnership must: be `false` when
+    slink:VkMemoryType::pname:propertyFlags does not have
+    ename:VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT.
+  * pname:compatibleAccessFlags must: be zero when
+    slink:VkMemoryType::pname:propertyFlags does not have
+    ename:VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT.
+  * pname:coherentAccessFlags must: be zero when pname:shareExclusiveOwnership
+    is `false` or when slink:VkMemoryType::pname:propertyFlags does not have
+    ename:VK_MEMORY_PROPERTY_HOST_COHERENT_BIT.
+  * pname:coherentAccessFlags must: be a subset of
+    pname:compatibleAccessFlags.
+****
+
+include::{generated}/validity/structs/VkForeignHostAccessMemoryTypeGOOGLE.txt[]
+--
+
+[open,refpage='VkMemoryForeignHostAccessFlagBitsGOOGLE',desc='Bitmask specifying the foreign host access policy',type='enums']
+--
+
+Bits which may: be set in
+slink:VkForeignHostAccessMemoryTypeGOOGLE::pname:compatibleAccessFlags and
+slink:VkForeignHostAccessMemoryTypeGOOGLE::pname:coherentAccessFlags,
+specifying the compatible and coherent foreign host access policies, are:
+
+include::{generated}/api/enums/VkMemoryForeignHostAccessFlagBitsGOOGLE.txt[]
+
+  * ename:VK_MEMORY_FOREIGN_HOST_ACCESS_UNCACHED_BIT_GOOGLE specifies that
+    foreign host access is not cached nor buffered.
+  * ename:VK_MEMORY_FOREIGN_HOST_ACCESS_BUFFERED_BIT_GOOGLE specifies that
+    foreign host access is not cached, but is buffered.
+    Multiple accesses can: be combined into one.
+  * ename:VK_MEMORY_FOREIGN_HOST_ACCESS_CACHED_BIT_GOOGLE specifies that
+    foreign host access is cached.
+
+--
+
+endif::VK_GOOGLE_external_memory_foreign_host_access[]
+
+
 [open,refpage='VkDeviceMemory',desc='Opaque handle to a device memory object',type='handles']
 --
 
@@ -2572,27 +2666,26 @@ See the description of <<synchronization-host-access-types, host access
 types>> for more information.
 ====
 
-ifdef::VK_EXT_external_memory_host[]
+ifdef::VK_EXT_external_memory[]
 [NOTE]
 .Note
 ====
-While memory objects imported from a handle type of
-ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT or
-ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT are
-inherently mapped to host address space, they are not considered to be host
-mapped device memory unless they are explicitly host mapped using
-flink:vkMapMemory.
-That means flushing or invalidating host caches with respect to host
-accesses performed on such memory through the original host pointer
-specified at import time is the responsibility of the application and must:
-be performed with appropriate synchronization primitives provided by the
-platform which are outside the scope of Vulkan.
+While memory objects with memory handles can potentially be mapped, or is
+inherently mapped, to host address space using the external memory handles,
+they are not considered to be host mapped device memory unless they are
+explicitly host mapped using flink:vkMapMemory.
+That means flushing or invalidating host caches with respect to host accesses
+performed on such memory through the host pointer derived from the external
+memory handle, or through the host pointer originally specified at import
+time, is the responsibility of the application and must: be performed with
+appropriate synchronization primitives provided by the platform which are
+outside the scope of Vulkan.
 fname:vkFlushMappedMemoryRanges and fname:vkInvalidateMappedMemoryRanges,
 however, can: still be used on such memory objects to synchronize host
 accesses performed through the host pointer of the host mapped device memory
 range returned by flink:vkMapMemory.
 ====
-endif::VK_EXT_external_memory_host[]
+endif::VK_EXT_external_memory[]
 
 [open,refpage='vkFlushMappedMemoryRanges',desc='Flush mapped memory ranges',type='protos']
 --

@@ -5591,6 +5591,19 @@ or ename:VK_QUEUE_FAMILY_FOREIGN_EXT
 endif::VK_EXT_queue_family_foreign[]
 to represent the external destination or source respectively.
 
+ifdef::VK_GOOGLE_external_memory_foreign_host_access[]
+
+When a Vulkan instance has the exclusive ownership of a resource's underlying
+memory, and the memory has a memory type in the instance whose
+slink:VkForeignHostAccessMemoryTypeGOOGLE::sname:shareExclusiveOwnership is
+`true`, any other Vulkan instance or any external API that supports host
+access can: make foreign host access to the memory without the exclusive
+ownership.  The application however still has to synchronize device access and
+foreign host access to the memory as defined in
+<<memory-device-hostaccess,Host Access to Device Memory Objects>>.
+
+endif::VK_GOOGLE_external_memory_foreign_host_access[]
+
 Binding a resource to a memory object shared between multiple Vulkan
 instances or other APIs does not change the ownership of the underlying
 memory.

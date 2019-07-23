@@ -1,0 +1,40 @@
+// Copyright (c) 2016-2019 Khronos Group. This work is licensed under a
+// Creative Commons Attribution 4.0 International License; see
+// http://creativecommons.org/licenses/by/4.0/
+
+include::meta/VK_GOOGLE_external_memory_foreign_host_access.txt[]
+
+Last Modified Date::
+    2019-07-23
+Contributors::
+  - Chia-I Wu
+
+This extension adds support for querying the cache policy for a memory type
+for foreign host access.
+
+=== New Enum Constants
+
+  * Extending elink:VkStructureType:
+  ** ename:VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_FOREIGN_HOST_ACCESS_PROPERTIES_GOOGLE
+
+=== New Enums
+
+  * elink:VkMemoryForeignHostAccessFlagBits
+
+=== New Structures
+
+  * slink:VkPhysicalDeviceMemoryForeignHostAccessPropertiesGOOGLE
+  * slink:VkForeignHostAccessMemoryTypeGOOGLE
+
+=== New Functions
+
+None.
+
+=== Issues
+
+None.
+
+=== Version History
+
+ * Revision 1, 2019-07-23 (Chia-I Wu)
+   - Initial draft
