@@ -8,9 +8,12 @@ Last Modified Date::
     2019-07-23
 Contributors::
   - Chia-I Wu
+  - Chad Versace
 
-This extension adds support for querying the cache policy for a memory type
-for foreign host access.
+This extension allows the exclusive ownership requirement for external
+memories to be relaxed and adds support for querying the cache policies.
+Together they enable coherent foreign host access which is essential for
+applications such as remote Vulkan or virtualized Vulkan on the same machine.
 
 === New Enum Constants
 
@@ -32,7 +35,72 @@ None.
 
 === Issues
 
-None.
+1) What is foreign host access?
+
+Vulkan supports device access and host access to a memory object when the
+memory object is allocated using a host-visible memory type.
+Host access defined by Vulkan must be through the pointer returned by
+vkMapMemory.
+Host access not through the pointer returned by vkMapMemory, but through the
+external memory handles and platform-defined mechanisms, is foreign host
+access.
+Examples include direct CPU access to HOST_ALLOCATION,
+HOST_MAPPED_FOREIGN_MEMORY, or mmap'ed DMA_BUF external memories.
+
+2) What are the synchronization requirements for foreign host access?
+
+Foreign host access must satisfy the same synchronization requirements as
+non-foreign host access does.
+Platform-defined mechanisms are used in place of vkFlushMappedMemoryRanges and
+vkInvalidateMappedMemoryRanges for host cache management.
+In addition, foreign host access must satisfy the exclusive ownership
+requirement which applies to any external memory.
+Specifically, foreign host access is disallowed when a Vulkan instance has the
+exclusive ownership of the external memory, unless the requirement is relaxed
+as defined by this extension.
+
+3) What are the use cases?
+
+Vulkan remoting or virtualization.
+When a Vulkan implementation is a remote proxy of a real Vulkan
+implementation, it normally seralizes Vulkan commands so that they can be sent
+to the real Vulkan implementation for execution.
+Vulkan commands that take or return pointers to non-serializable objects, such
+as mapped memory objects or functions, cannot be serialized however.
+When the real Vulkan implementation supports external memories, it is possible
+for the remote proxy to implement vkMapMemory without serialing the command at
+all, by silently using external memories with vkAllocateMemory.
+The remote proxy's idea of host access to its own memory objects is however
+foreign host access to external memories to the real Vulkan implementation,
+and must follow foreign host access requirements listed in issue 2).
+With this extension, foreign host access is allowed at any time when the
+exclusive ownership requirement is relaxed by the real Vulkan implementation.
+Foreign host access can also have the same coherency as non-foreign host
+access.
+Together they enable the remote proxy to advertise memory types that are
+coherent.
+
+4) Does this extension solve all remoting issues regarding memory objects?
+
+No.
+Following the discussion in issue 3), the real Vulkan implementation can
+require dedicated allocation for an external memory, for it to be bound to a
+resource.
+The remote proxy cannot require that because the application talking to the
+remote proxy does not know that external memories are used under the hood.
+The real Vulkan implementation can also say that an external memory handle
+does not have any coherent memory type.
+The remote proxy cannot promise that non-sparse buffers and linear images can
+always be bound to a coherent memory type, as required by Vulkan.
+
+5) Should the exclusive ownership requirement be relaxed for foreign device
+access as well?
+
+No.
+The motivation of the extension is to mimic non-foreign host access with
+foreign host access.
+There is no such need, and it makes no sense, to mimic non-foreign device
+access.
 
 === Version History
 
