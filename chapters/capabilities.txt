@@ -380,6 +380,16 @@ slink:VkPhysicalDeviceImageFormatInfo2, then
 flink:vkGetPhysicalDeviceImageFormatProperties2 returns
 ename:VK_ERROR_FORMAT_NOT_SUPPORTED.
 
+ifdef::VK_GOOGLE_external_memory_host_map_fd[]
+[NOTE]
+.Note
+====
+ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAP_FD_BIT_GOOGLE is compatible with
+any pname:format, pname:type, pname:tiling, pname:usage, and pname:flags
+specified in slink:VkPhysicalDeviceImageFormatInfo2.
+====
+endif::VK_GOOGLE_external_memory_host_map_fd[]
+
 include::{generated}/validity/structs/VkPhysicalDeviceExternalImageFormatInfo.txt[]
 --
 
@@ -450,6 +460,17 @@ ifdef::VK_EXT_external_memory_host[]
     therefore become invalid if the foreign memory is unmapped or otherwise
     becomes no longer available.
 endif::VK_EXT_external_memory_host[]
+ifdef::VK_GOOGLE_external_memory_host_map_fd[]
+  * ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAP_FD_BIT_GOOGLE specifies
+    a POSIX file descriptor handle that is used for host mapping.
+    It must: be compatible with the POSIX system calls code:dup, code:dup2,
+    code:close, code:mmap, code:munmap, and the non-standard system call
+    code:dup3.
+    Additionally, it must: be transportable over a socket using an
+    code:SCM_RIGHTS control message.
+    It owns a reference to the underlying memory resource represented by its
+    Vulkan memory object.
+endif::VK_GOOGLE_external_memory_host_map_fd[]
 ifdef::VK_EXT_external_memory_dma_buf[]
   * ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT is a file
     descriptor for a Linux dma_buf.
@@ -484,6 +505,9 @@ ifdef::VK_EXT_external_memory_host[]
 | ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT | No restriction | No restriction
 | ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT | No restriction | No restriction
 endif::VK_EXT_external_memory_host[]
+ifdef::VK_GOOGLE_external_memory_host_map_fd[]
+| ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_FD_BIT_GOOGLE | Not applicable | Not applicable
+endif::VK_GOOGLE_external_memory_host_map_fd[]
 ifdef::VK_EXT_external_memory_dma_buf[]
 | ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT | No restriction | No restriction
 endif::VK_EXT_external_memory_dma_buf[]
@@ -504,6 +528,15 @@ from the same device, as they import memory from the host or a foreign
 device, respectively.
 ====
 endif::VK_EXT_external_memory_host[]
+
+ifdef::VK_GOOGLE_external_memory_host_map_fd[]
+[NOTE]
+.Note
+====
+ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAP_FD_BIT_GOOGLE is for host
+mapping and is never shared with another driver or device.
+====
+endif::VK_GOOGLE_external_memory_host_map_fd[]
 
 ifdef::VK_EXT_external_memory_dma_buf[]
 [NOTE]
@@ -641,6 +674,13 @@ with external handle type
 ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT, or
 ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT.
 endif::VK_EXT_external_memory_host[]
+ifdef::VK_GOOGLE_external_memory_host_map_fd[]
+Implementations must: report ename:VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT,
+and must: not report ename:VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT or
+ename:VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT for images or buffers with
+external handle type
+ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAP_FD_BIT_GOOGLE.
+endif::VK_GOOGLE_external_memory_host_map_fd[]
 
 --
 

@@ -1,0 +1,46 @@
+// Copyright (c) 2020 Khronos Group.
+//
+// SPDX-License-Identifier: CC-BY-4.0
+
+include::{generated}/meta/{refprefix}VK_GOOGLE_external_memory_host_map_fd.txt[]
+
+=== Other Extension Metadata
+
+*Last Modified Date*::
+    2020-09-01
+*Contributors*::
+  - Chia-I Wu
+
+=== Description
+
+This extension allows a device memory to be exported as a POSIX file
+descriptor for host mapping. The file descriptor can be shared with and mapped
+by another process, which is useful for applications such as Vulkan
+virtualization or isolation.
+
+include::{generated}/interfaces/VK_EXT_memory_budget.txt[]
+
+=== Issues
+
+1) What do host map fds provide that opaque fds or dma-bufs don't?
+
+Comparing to opaque fds or dma-bufs, the main differences are
+
+ - VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT must be cleared
+ - VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT must be cleared
+ - it is compatible with any buffer or image
+ - VkMemoryRequirements can report device-local non-host-visible memory types
+ - host access from another process is well-defined
+
+These differences allow an application to set
+VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAP_FD_BIT_GOOGLE for images, buffers, and
+memories in most cases without worrying about performance degradation.
+
+2) Can host map fds be imported?
+
+No. They are only to provide host mappings.
+
+=== Version History
+
+ * Revision 1, 2020-09-01 (Chia-I Wu)
+   - Initial draft

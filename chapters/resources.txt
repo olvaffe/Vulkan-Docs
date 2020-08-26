@@ -4334,6 +4334,17 @@ endif::VK_VERSION_1_1,VK_KHR_external_memory[]
     pname:memoryTypeBits member always contains at least one bit set
     corresponding to a sname:VkMemoryType with a pname:propertyFlags that
     has the ename:VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT bit set.
+ifdef::VK_GOOGLE_external_memory_host_map_fd[]
+  * If pname:buffer was created with
+    slink:VkExternalMemoryBufferCreateInfo::pname:handleTypes set to
+    ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAP_FD_BIT_GOOGLE, or
+    pname:image was created with
+    slink:VkExternalMemoryImageCreateInfo::pname:handleTypes set to
+    ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAP_FD_BIT_GOOGLE, the
+    pname:memoryTypeBits member always contains at least one bit set
+    corresponding to a sname:VkMemoryType with a pname:propertyFlags that
+    has the ename:VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT bit set.
+endif::VK_GOOGLE_external_memory_host_map_fd[]
   * The pname:memoryTypeBits member is identical for all sname:VkBuffer
     objects created with the same value for the pname:flags and pname:usage
     members in the slink:VkBufferCreateInfo structure
