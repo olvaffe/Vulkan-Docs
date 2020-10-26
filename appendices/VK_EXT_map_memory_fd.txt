@@ -1,0 +1,72 @@
+// Copyright (c) 2020 Khronos Group.
+//
+// SPDX-License-Identifier: CC-BY-4.0
+
+include::{generated}/meta/{refprefix}VK_EXT_map_memory_fd.txt[]
+
+=== Other Extension Metadata
+
+*Last Modified Date*::
+    2020-10-28
+*Contributors*::
+  - Chia-I Wu
+
+=== Description
+
+This extension allows a mappable POSIX file descriptor to be exported from a
+mappable device memory. The file descriptor can be shared with and mapped by
+another process. The functionality is useful for applications such as Vulkan
+virtualization or isolation, where device memory allocation and host mapping
+happen in different processes.
+
+include::{generated}/interfaces/VK_EXT_map_memory_fd.txt[]
+
+=== Issues
+
+1) Why not reuse external memory mechanism?
+
+It is tempting to introduce a new external memory handle that is a POSIX file
+descriptor compatible with mmap(). There are some issues however because, in
+Vulkan virtualization or isolation, the application is a middle man making
+Vulkan calls on behalf of another application in another process.
+
+Being a middle man, the application does not know that when a mappable memory
+is allocated, which buffer/image the memory will be bound to; or conversely,
+when a buffer/image is created, whether a mappable memory will be bound. There
+are exceptions (e.g., dedicated allocations or tiled images do not need
+mappable memory), but in general the application needs to assume that external
+memory will always be needed (to export a mmap()-able fd). That becomes an
+issue because
+
+ - The valid usage of VkExportMemoryAllocateInfo::handleTypes depends on
+   vkGetPhysicalDeviceExternalBufferProperties or
+   vkGetPhysicalDeviceImageFormatProperties2. An external memory can however
+   be allocated before the properties of the buffer/image it will be bound to
+   is known.
+ - VkMemoryRequirements2 of a buffer/image can change when the buffer/buffer
+   was created with VkExternalMemoryBufferCreateInfo or
+   VkExternalMemoryImageCreateInfo chained. For example, an implementation
+   might filter out memory types with VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT.
+   That would stop the device-local memory types from being used.
+
+While it would be possible to specify special rules for the new handle type to
+mitigate the issues, those rules would still feel like a violation of the
+external memory design.
+
+2) Does vkMapMemoryFdEXT make a memory object host mapped?
+
+UNRESOLVED, but no in the current version.
+
+vkMapMemoryFdEXT is closer to vkGetMemoryFdKHR than to vkMapMemory in many
+ways, and vkGetMemoryFdKHR does not interact with vkMapMemory. The downside is
+that implementations are required to support recursive mapping which the
+expected use cases do not rely on.
+
+3) Does vkMapMemoryFdEXT work on imported memory objects?
+
+No.
+
+=== Version History
+
+ * Revision 1, 2020-10-28 (Chia-I Wu)
+   - Initial draft

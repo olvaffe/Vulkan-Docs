@@ -6603,6 +6603,13 @@ typedef void <name>CAMetalLayer</name>;
             <param optional="true"><type>VkMemoryMapFlags</type> <name>flags</name></param>
             <param optional="false,true"><type>void</type>** <name>ppData</name></param>
         </command>
+        <command successcodes="VK_SUCCESS" errorcodes="VK_ERROR_OUT_OF_HOST_MEMORY,VK_ERROR_OUT_OF_DEVICE_MEMORY,VK_ERROR_MEMORY_MAP_FAILED,VK_ERROR_TOO_MANY_OBJECTS">
+            <proto><type>VkResult</type> <name>vkMapMemoryFdEXT</name></proto>
+            <param><type>VkDevice</type> <name>device</name></param>
+            <param externsync="true"><type>VkDeviceMemory</type> <name>memory</name></param>
+            <param optional="true"><type>VkMemoryMapFlags</type> <name>flags</name></param>
+            <param><type>int</type>* <name>pFd</name></param>
+        </command>
         <command>
             <proto><type>void</type> <name>vkUnmapMemory</name></proto>
             <param><type>VkDevice</type> <name>device</name></param>
@@ -12723,10 +12730,11 @@ typedef void <name>CAMetalLayer</name>;
                 <type name="VkPipelineCreationFeedbackEXT"/>
             </require>
         </extension>
-        <extension name="VK_GOOGLE_extension_194" number="194" author="GOOGLE" contact="Jean-Francois Roy @jfroy" supported="disabled">
+        <extension name="VK_EXT_map_memory_fd" number="194" type="device" author="GOOGLE" contact="Chia-I Wu @olvaffe" supported="vulkan">
             <require>
-                <enum value="0"                                         name="VK_GOOGLE_EXTENSION_194_SPEC_VERSION"/>
-                <enum value="&quot;VK_GOOGLE_extension_194&quot;"       name="VK_GOOGLE_EXTENSION_194_EXTENSION_NAME"/>
+                <enum value="1"                                         name="VK_EXT_MAP_MEMORY_FD_SPEC_VERSION"/>
+                <enum value="&quot;VK_EXT_map_memory_fd&quot;"          name="VK_EXT_MAP_MEMORY_FD_EXTENSION_NAME"/>
+                <command name="vkMapMemoryFdEXT"/>
             </require>
         </extension>
         <extension name="VK_GOOGLE_extension_195" number="195" author="GOOGLE" contact="Jean-Francois Roy @jfroy" supported="disabled">

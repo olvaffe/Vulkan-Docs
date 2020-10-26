@@ -828,7 +828,12 @@ include::{generated}/api/enums/VkMemoryPropertyFlagBits.txt[]
     heap with the ename:VK_MEMORY_HEAP_DEVICE_LOCAL_BIT set.
   * ename:VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT bit specifies that memory
     allocated with this type can: be mapped for host access using
+ifndef::VK_EXT_map_memory_fd[]
     flink:vkMapMemory.
+endif::VK_EXT_map_memory_fd[]
+ifdef::VK_EXT_map_memory_fd[]
+    flink:vkMapMemory or flink:vkMapMemoryFdEXT.
+endif::VK_EXT_map_memory_fd[]
   * ename:VK_MEMORY_PROPERTY_HOST_COHERENT_BIT bit specifies that the host
     cache management commands flink:vkFlushMappedMemoryRanges and
     flink:vkInvalidateMappedMemoryRanges are not needed to flush host writes
@@ -3054,6 +3059,70 @@ include::{generated}/api/protos/vkUnmapMemory.txt[]
 ****
 
 include::{generated}/validity/protos/vkUnmapMemory.txt[]
+--
+
+[open,refpage='vkMapMemoryFdEXT',desc='Export a mappable POSIX file descriptor for a memory object',type='protos']
+--
+
+To export a mappable POSIX file descriptor referencing the payload of a Vulkan
+mappable device memory object, call:
+
+include::{generated}/api/protos/vkMapMemoryFdEXT.txt[]
+
+  * pname:device is the logical device created the device memory being
+    exported.
+  * pname:memory is the memory object from which the POSIX file descriptor
+    will be exported.
+  * pname:flags is reserved for future use.
+  * pname:pFd will return a POSIX file descriptor referencing the payload of
+    the device memory object.
+
+After a successful call to fname:vkMapMemoryFdEXT, a valid POSIX file
+descriptor is returned.
+The file descriptor must: be compatible with the POSIX system calls code:dup,
+code:dup2, code:mmap, code:close, and the non-standard system call code:dup3.
+Additionally, it must: be transportable over a socket using an code:SCM_RIGHTS
+control message.
+
+[NOTE]
+.Note
+====
+The memory object is not considered host mapped after a successful call to
+fname:vkMapMemoryFdEXT.
+It is possible to call fname:vkMapMemoryFdEXT again, or to call
+flink:vkMapMemory, on the same memory object.
+It is also possible to call fname:vkMapMemoryFdEXT on a memory object that is
+currently host mapped.
+====
+
+Each call to fname:vkMapMemoryFdKHR must: create a new file descriptor holding
+a reference to the memory object's payload and transfer ownership of the file
+descriptor to the application.
+To avoid leaking resources, the application must: release ownership of the
+file descriptor using the code:close system call when it is no longer needed.
+Where supported by the operating system, the implementation must: set the file
+descriptor to be closed automatically when an code:execve system call is made.
+
+A host virtual address pointer can be retrieved by calling code:mmap with
+code:MAP_SHARED set on the file descriptor.
+If the device memory was allocated from a memory type with the
+ename:VK_MEMORY_PROPERTY_HOST_COHERENT_BIT set, host access performed via the
+pointer is coherent.
+Otherwise, flushing or invaliding host caches with respect to host access
+performed via the pointer must: be performed with appropriate synchronization
+primitives provided by the platform which are outside the scope of Vulkan.
+
+.Valid Usage
+****
+  * pname:memory must: have been created with a memory type that reports
+    ename:VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
+  * pname:memory must: not have been imported from an external handle.
+ifdef::VK_KHR_device_group[]
+  * pname:memory must: not have been allocated with multiple instances
+endif::VK_KHR_device_group[]
+****
+
+include::{generated}/validity/protos/vkMapMemoryFdEXT.txt[]
 --
 
 

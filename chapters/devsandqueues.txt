@@ -1689,7 +1689,11 @@ Those objects must: still be destroyed before their parents or the device
 can: be destroyed (see the <<fundamentals-objectmodel-lifetime,Object
 Lifetime>> section).
 The host address space corresponding to device memory mapped using
-flink:vkMapMemory is still valid, and host memory accesses to these mapped
+flink:vkMapMemory
+ifdef::VK_EXT_map_memory_fd[]
+or flink:vkMapMemoryFdEXT
+endif::VK_EXT_map_memory_fd[]
+is still valid, and host memory accesses to these mapped
 regions are still valid, but the contents are undefined:.
 It is still legal to call any API command on the device and child objects.
 
