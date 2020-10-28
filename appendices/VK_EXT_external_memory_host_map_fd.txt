@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: CC-BY-4.0
 
-include::{generated}/meta/{refprefix}VK_GOOGLE_external_memory_host_map_fd.txt[]
+include::{generated}/meta/{refprefix}VK_EXT_external_memory_host_map_fd.txt[]
 
 === Other Extension Metadata
 

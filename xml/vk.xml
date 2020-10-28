@@ -12452,11 +12452,11 @@ typedef void <name>CAMetalLayer</name>;
                 <type name="VkPipelineCreationFeedbackEXT"/>
             </require>
         </extension>
-        <extension name="VK_GOOGLE_external_memory_host_map_fd" number="194" type="device" requires="VK_KHR_external_memory_fd" author="GOOGLE" contact="Chia-I Wu" supported="vulkan">
+        <extension name="VK_EXT_external_memory_host_map_fd" number="194" type="device" requires="VK_KHR_external_memory_fd" author="GOOGLE" contact="Chia-I Wu" supported="vulkan">
             <require>
-                <enum value="0"                                         name="VK_GOOGLE_EXTERNAL_MEMORY_HOST_MAP_FD_SPEC_VERSION"/>
-                <enum value="&quot;VK_GOOGLE_external_memory_host_map_fd&quot;" name="VK_GOOGLE_EXTERNAL_MEMORY_HOST_MAP_FD_EXTENSION_NAME"/>
-                <enum bitpos="11" extends="VkExternalMemoryHandleTypeFlagBits" name="VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAP_FD_BIT_GOOGLE"/>
+                <enum value="0"                                         name="VK_EXT_EXTERNAL_MEMORY_HOST_MAP_FD_SPEC_VERSION"/>
+                <enum value="&quot;VK_EXT_external_memory_host_map_fd&quot;" name="VK_EXT_EXTERNAL_MEMORY_HOST_MAP_FD_EXTENSION_NAME"/>
+                <enum bitpos="11" extends="VkExternalMemoryHandleTypeFlagBits" name="VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAP_FD_BIT_EXT"/>
             </require>
         </extension>
         <extension name="VK_GOOGLE_extension_195" number="195" author="GOOGLE" contact="Jean-Francois Roy @jfroy" supported="disabled">

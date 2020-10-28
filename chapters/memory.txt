@@ -1179,13 +1179,13 @@ ifdef::VK_NV_external_memory[]
     slink:VkExportMemoryWin32HandleInfoNV structure
 endif::VK_NV_external_memory[]
 endif::VK_KHR_external_memory[]
-ifdef::VK_GOOGLE_external_memory_host_map_fd[]
+ifdef::VK_EXT_external_memory_host_map_fd[]
   * If the pname:pNext chain includes a slink:VkExportMemoryAllocateInfo
     structure, and sname:VkExportMemoryAllocateInfo::pname:handleTypes
-    includes ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAP_FD_BIT_GOOGLE,
+    includes ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAP_FD_BIT_EXT,
     the memory type specified by pname:memoryTypeIndex must: report
     ename:VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT.
-endif::VK_GOOGLE_external_memory_host_map_fd[]
+endif::VK_EXT_external_memory_host_map_fd[]
 ifdef::VK_KHR_external_memory_win32+VK_NV_external_memory_win32[]
   * [[VUID-VkMemoryAllocateInfo-pNext-00641]]
     If the pname:pNext chain includes a
@@ -2066,9 +2066,9 @@ include::{generated}/api/protos/vkGetMemoryFdPropertiesKHR.txt[]
   * [[VUID-vkGetMemoryFdPropertiesKHR-handleType-00674]]
     pname:handleType must: not be
     ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT_KHR
-ifdef::VK_GOOGLE_external_memory_host_map_fd[]
-    or ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAP_FD_BIT_GOOGLE
-endif::VK_GOOGLE_external_memory_host_map_fd[]
+ifdef::VK_EXT_external_memory_host_map_fd[]
+    or ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAP_FD_BIT_EXT
+endif::VK_EXT_external_memory_host_map_fd[]
 ****
 
 include::{generated}/validity/protos/vkGetMemoryFdPropertiesKHR.txt[]
@@ -2816,10 +2816,10 @@ to maintaining memory access ordering.
   * [[VUID-vkMapMemory-memory-00682]]
     pname:memory must: have been created with a memory type that reports
     ename:VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
-ifdef::VK_GOOGLE_external_memory_host_map_fd[]
+ifdef::VK_EXT_external_memory_host_map_fd[]
   * pname:memory must: not have been allocated with the external handle type
-    ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAP_FD_BIT_GOOGLE
-endif::VK_GOOGLE_external_memory_host_map_fd[]
+    ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAP_FD_BIT_EXT
+endif::VK_EXT_external_memory_host_map_fd[]
 ifdef::VK_KHR_device_group[]
   * [[VUID-vkMapMemory-memory-00683]]
     pname:memory must: not have been allocated with multiple instances
@@ -3427,13 +3427,13 @@ device memory allocation size, and code:height and code:layers must: be `1`.
 
 endif::VK_KHR_external_memory_capabilities+VK_ANDROID_external_memory_android_hardware_buffer[]
 
-ifdef::VK_GOOGLE_external_memory_host_map_fd[]
+ifdef::VK_EXT_external_memory_host_map_fd[]
 
 ==== Host Map File Descriptors
 Host map file descriptors can be used with the POSIX system call code:mmap and
 code:munmap.
 On the other hand, memory objects allocated with the external handle type
-ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAP_FD_BIT_GOOGLE cannot be used
+ename:VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAP_FD_BIT_EXT cannot be used
 with fname:vkMapMemory.
 
 If the memory type of the memory object from which the host map file
@@ -3447,7 +3447,7 @@ make host writes available or device writes visible in the host domain.
 The application is responsible for synchronizing both device and host access
 to mapped memory ranges.
 
-endif::VK_GOOGLE_external_memory_host_map_fd[]
+endif::VK_EXT_external_memory_host_map_fd[]
 
 ifdef::VK_VERSION_1_1,VK_KHR_device_group[]
 
