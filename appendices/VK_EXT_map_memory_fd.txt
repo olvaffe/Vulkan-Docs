@@ -7,9 +7,10 @@ include::{generated}/meta/{refprefix}VK_EXT_map_memory_fd.txt[]
 === Other Extension Metadata
 
 *Last Modified Date*::
-    2020-10-28
+    2020-XX-XX
 *Contributors*::
   - Chia-I Wu
+  - Chad Versace
 
 === Description
 
@@ -30,11 +31,11 @@ descriptor compatible with mmap(). There are some issues however because, in
 Vulkan virtualization or isolation, the application is a middle man making
 Vulkan calls on behalf of another application in another process.
 
-Being a middle man, the application does not know that when a mappable memory
-is allocated, which buffer/image the memory will be bound to; or conversely,
-when a buffer/image is created, whether a mappable memory will be bound. There
-are exceptions (e.g., dedicated allocations or tiled images do not need
-mappable memory), but in general the application needs to assume that external
+Being a middle man, the application does not know, when a buffer/image is
+created, whether a mappable memory will be bound; or when a mappable memory is
+allocated, where it will be bound or whether it will be mapped at all. There
+are exceptions (e.g., dedicated allocations, tiled images do not need mappable
+memory, etc.), but in general the application needs to assume that external
 memory will always be needed (to export a mmap()-able fd). That becomes an
 issue because
 
@@ -43,7 +44,7 @@ issue because
    vkGetPhysicalDeviceImageFormatProperties2. An external memory can however
    be allocated before the properties of the buffer/image it will be bound to
    is known.
- - VkMemoryRequirements2 of a buffer/image can change when the buffer/buffer
+ - VkMemoryRequirements2 of a buffer/image can change when the buffer/image
    was created with VkExternalMemoryBufferCreateInfo or
    VkExternalMemoryImageCreateInfo chained. For example, an implementation
    might filter out memory types with VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT.
@@ -62,11 +63,21 @@ ways, and vkGetMemoryFdKHR does not interact with vkMapMemory. The downside is
 that implementations are required to support recursive mapping which the
 expected use cases do not rely on.
 
-3) Does vkMapMemoryFdEXT work on imported memory objects?
+3) Should vkMapMemoryFdEXT be renamed?
+
+Since the answer is tentatively no for issue 2, vkMapMemoryFdEXT is indeed a
+misleading name.  Exact name is TBD.
+
+4) Does vkMapMemoryFdEXT work on imported memory objects?
 
 No.
 
+For the expected use cases, it is always possible to call vkMapMemoryFdEXT in
+the allocating process.  Being able to call vkMapMemoryFdEXT in the importing
+process has no clear benefit and would interact poorly with external handles
+that do not like being re-exported.
+
 === Version History
 
- * Revision 1, 2020-10-28 (Chia-I Wu)
+ * Revision 1, 2020-XX-XX (Chia-I Wu)
    - Initial draft
